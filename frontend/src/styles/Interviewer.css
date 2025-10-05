@@ -1,0 +1,140 @@
+/* styles/Interviewer.css (Dark Theme) */
+
+.interviewer-dashboard {
+    padding: 0; 
+    animation: fadeIn 0.7s ease-out forwards;
+}
+
+/* Controls Bar */
+.controls-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    background-color: #5D2F77; /* Rich Purple background for controls */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Strong shadow for depth on dark theme */
+}
+
+.controls-bar input,
+.controls-bar select {
+    padding: 10px 12px;
+    border: 1px solid #7a509a; /* Lighter border for visibility */
+    border-radius: 6px;
+    background-color: #4b2671; /* Slightly lighter background than body */
+    color: #ffffff;
+    transition: all 0.3s;
+}
+
+.controls-bar input:focus,
+.controls-bar select:focus {
+    border-color: #E45A92; /* Vibrant Pink focus border */
+    box-shadow: 0 0 0 3px rgba(228, 90, 146, 0.4);
+    outline: none;
+}
+
+.candidate-list {
+    display: grid;
+    gap: 20px;
+}
+
+/* Candidate Card */
+.candidate-card {
+    background-color: #5D2F77; /* Rich Purple card background */
+    border: 1px solid #7a509a; 
+    border-radius: 12px;
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+    color: #ffffff; /* Ensure default text is white */
+}
+
+.candidate-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(228, 90, 146, 0.3); /* Glowing shadow using accent color */
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.candidate-info b {
+    font-size: 1.2rem;
+    color: #E45A92; /* Vibrant Pink for name */
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.status-completed {
+    background-color: #E45A92; /* Vibrant Pink for success/completed */
+    color: #3E1E68; /* Dark text on bright badge */
+}
+
+/* Using a lighter purple for in-progress to be distinct */
+.status-in-progress {
+    background-color: #7a509a; 
+    color: #ffffff;
+}
+
+.score-display {
+    margin-left: 20px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #E45A92; /* Vibrant Pink for high-impact number */
+}
+
+.qa-details summary {
+    font-weight: 600;
+    color: #FFACAC; /* Soft Pink for summary title */
+    cursor: pointer;
+    padding: 8px 0;
+    transition: color 0.2s;
+    list-style: none;
+}
+
+.qa-details summary::before {
+    content: "▶";
+    font-size: 0.8em;
+    margin-right: 8px;
+    transition: transform 0.2s;
+    color: #E45A92;
+}
+.qa-details[open] summary::before {
+    content: "▼";
+}
+
+.qa-item {
+    padding: 10px 10px;
+    border-top: 1px solid #7a509a;
+    margin-top: 5px;
+    font-size: 0.95rem;
+    background-color: #4b2671; /* Darker background for inner list item */
+    border-radius: 4px;
+    color: #f0f0f0; /* Light text for readability */
+}
+
+.summary-box {
+    margin-top: 15px;
+    padding: 12px;
+    background: #4b2671;
+    border-left: 5px solid #E45A92;
+    border-radius: 6px;
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .controls-bar {
+        flex-direction: column;
+    }
+}

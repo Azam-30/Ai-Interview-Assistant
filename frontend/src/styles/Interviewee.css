@@ -1,0 +1,177 @@
+/* styles/Interviewee.css (Dark Theme) */
+
+.interviewee-container {
+    display: flex;
+    gap: 30px;
+    padding: 20px 0;
+    position: relative;
+    animation: fadeIn 0.7s ease-out forwards;
+}
+
+/* --- Left Panel (Main Interview Area) --- */
+.left-panel {
+    flex: 3;
+    min-width: 300px;
+}
+
+.no-active-text {
+    display: block;
+    margin-top: 20px;
+    padding: 30px;
+    border: 3px dashed #5D2F77; /* Rich Purple dashed border */
+    border-radius: 12px;
+    text-align: center;
+    color: #FFACAC !important; /* Soft Pink for hint text */
+    font-style: italic;
+    transition: all 0.3s;
+}
+
+.no-active-text:hover {
+    border-color: #E45A92;
+    color: #E45A92 !important;
+}
+
+/* Question Card Styling */
+.question-card {
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    background-color: #5D2F77; /* Rich Purple card background */
+    transition: box-shadow 0.3s;
+    margin-top: 15px;
+    color: #ffffff;
+}
+
+.question-card:hover {
+    box-shadow: 0 10px 30px rgba(228, 90, 146, 0.2);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #E45A92; /* Vibrant Pink header */
+}
+
+.timer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px 0;
+    border-bottom: 2px solid #7a509a;
+    animation: slideDown 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.question-text {
+    display: block;
+    font-size: 1.4rem;
+    line-height: 1.5;
+    margin: 20px 0;
+    color: #ffffff;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.answer-textarea {
+    min-height: 180px !important;
+    font-size: 1rem;
+    padding: 15px;
+    transition: all 0.3s;
+    border-radius: 10px !important;
+    background-color: #4b2671; /* Darker input background */
+    
+    /* CRITICAL FIX: Force text color to white against the dark background */
+    color: #ffffff !important; 
+    
+    border: 1px solid #7a509a;
+    resize: vertical;
+}
+
+.answer-textarea::placeholder {
+    /* Set placeholder to a light color (Soft Pink) */
+    color: #FFACAC; 
+    opacity: 0.6;
+}
+
+.answer-textarea:focus {
+    border-color: #E45A92 !important; 
+    color: #ffffff !important;  /* keep text white */
+    background-color: #4b2671;  /* maintain background */
+    box-shadow: 0 0 0 3px rgba(228, 90, 146, 0.4) !important;
+}
+
+.submit-btn {
+    width: 100%;
+    margin-top: 25px;
+    height: 45px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background-color: #E45A92 !important; /* Vibrant Pink Button */
+    border-color: #E45A92 !important;
+    color: #3E1E68 !important; /* Dark text on vibrant button */
+    transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+}
+
+.submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(228, 90, 146, 0.6);
+    background-color: #ff8fb7 !important;
+    border-color: #ff8fb7 !important;
+}
+
+.progress-bar {
+    margin-top: 20px;
+}
+
+/* --- Right Panel (Sessions List) --- */
+.right-panel {
+    flex: 1.2;
+    background-color: #4b2671; /* Slightly darker container */
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.candidate-card {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #5D2F77;
+    background-color: #3E1E68; /* Deep Indigo card background */
+    color: #ffffff;
+    transition: transform 0.2s;
+}
+
+.candidate-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 10px rgba(228, 90, 146, 0.2);
+}
+
+/* Overlay for Loading/Fetching */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(62, 30, 104, 0.95); /* Deep Indigo, near opaque */
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+    transition: opacity 0.3s;
+}
+
+/* --- Responsiveness --- */
+@media (max-width: 992px) {
+    .interviewee-container {
+        flex-direction: column;
+    }
+    .right-panel {
+        max-height: none;
+        overflow-y: visible;
+    }
+}
