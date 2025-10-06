@@ -1,12 +1,3 @@
-// Determine backend base URL dynamically
-const API_BASE =
-  process.env.REACT_APP_API_BASE_URL ||
-  (window.location.hostname === "localhost"
-    ? "http://localhost:5050"
-    : "https://ai-interview-assistant.vercel.app");
-
-
-
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   Card, Input, Button, Modal, Progress, List, Badge, Typography, message,
@@ -22,6 +13,15 @@ import '../styles/Interviewee.css';
 const { Text, Title } = Typography;
 
 const difficultySeconds = { easy: 20, medium: 60, hard: 120 };
+// Determine backend base URL dynamically
+const API_BASE =
+  process.env.REACT_APP_API_BASE_URL ||
+  (window.location.hostname === "localhost"
+    ? "http://localhost:5050"
+    : "https://ai-interview-assistant.vercel.app");
+
+
+
 
 // Color palette
 const COLOR_SAFE = '#FFACAC';
