@@ -1,5 +1,10 @@
+// Determine backend base URL dynamically
 const API_BASE =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:5050";
+  process.env.REACT_APP_API_BASE_URL ||
+  (window.location.hostname === "localhost"
+    ? "http://localhost:5050"
+    : "https://ai-interview-assistant.vercel.app");
+
 
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
