@@ -13,15 +13,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Gemini AI
+// ✅ Log check to confirm serverless start
+console.log("🚀 Vercel API initialized successfully.");
+
+// Gemini API setup
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
-// Helper functions
+// -----------------------------
+// 🔹 Helper Functions
+// -----------------------------
 function extractJSON(text) {
   try {
     return JSON.parse(text);
-  } catch (err) {
+  } catch {
     const match = text.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
     if (match) {
       try {
@@ -34,15 +39,12 @@ function extractJSON(text) {
   }
 }
 
-function extractEmail(text) {
-  const m = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}/);
-  return m ? m[0] : null;
-}
+const extractEmail = (text) =>
+  text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}/)?.[0] || null;
 
-function extractPhone(text) {
-  const m = text.match(/(\+?\d{1,3}[\s-]?)?(\d{10}|\d{3}[\s-]\d{3}[\s-]\d{4})/);
-  return m ? m[0] : null;
-}
+const extractPhone = (text) =>
+  text.match(/(\+?\d{1,3}[\s-]?)?(\d{10}|\d{3}[\s-]\d{3}[\s-]\d{4})/)?.[0] ||
+  null;
 
 function extractName(text) {
   const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
@@ -54,10 +56,17 @@ function extractName(text) {
   return null;
 }
 
-// File Upload (to tmp dir)
-const upload = multer({ dest: path.join("/tmp") });
+// -----------------------------
+// 🔹 File Upload Handling
+// -----------------------------
+// Use `/tmp` for temporary storage in Vercel
+const upload = multer({ dest: "/tmp" });
 
-// Resume Parsing
+// -----------------------------
+// 🔹 API Routes
+// -----------------------------
+
+// 🧾 Parse Resume
 app.post("/api/parse-resume", upload.single("file"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
@@ -81,7 +90,7 @@ app.post("/api/parse-resume", upload.single("file"), async (req, res) => {
     const email = extractEmail(text);
     const phone = extractPhone(text);
 
-    fs.unlinkSync(req.file.path);
+    fs.unlinkSync(req.file.path); // cleanup tmp file
     res.json({ name, email, phone, text });
   } catch (err) {
     console.error("❌ Resume parsing error:", err.message);
@@ -89,7 +98,7 @@ app.post("/api/parse-resume", upload.single("file"), async (req, res) => {
   }
 });
 
-// Question Generation
+// 🤖 Generate Questions
 app.post("/api/generate-questions", async (req, res) => {
   try {
     const role = req.body.role || "Full Stack Developer";
@@ -104,11 +113,12 @@ app.post("/api/generate-questions", async (req, res) => {
     if (!questions) throw new Error("Invalid AI JSON output");
     res.json({ questions });
   } catch (err) {
+    console.error("❌ Question generation error:", err.message);
     res.status(500).json({ error: "Gemini question generation failed" });
   }
 });
 
-// Grade Answer
+// 🧠 Grade Answer
 app.post("/api/grade-answer", async (req, res) => {
   try {
     const { question, answer } = req.body;
@@ -126,11 +136,12 @@ app.post("/api/grade-answer", async (req, res) => {
     if (!grading) throw new Error("Invalid grading output");
     res.json(grading);
   } catch (err) {
+    console.error("❌ Grading error:", err.message);
     res.status(500).json({ error: "Gemini grading failed" });
   }
 });
 
-// Final Summary
+// 📊 Final Summary
 app.post("/api/final-summary", async (req, res) => {
   try {
     const { candidate } = req.body;
@@ -148,9 +159,12 @@ app.post("/api/final-summary", async (req, res) => {
     if (!summary) throw new Error("Invalid summary output");
     res.json(summary);
   } catch (err) {
+    console.error("❌ Summary error:", err.message);
     res.status(500).json({ error: "Gemini summary failed" });
   }
 });
 
-// ✅ Export app as Vercel serverless function
+// -----------------------------
+// ✅ Export Express App (Vercel style)
+// -----------------------------
 module.exports = app;
