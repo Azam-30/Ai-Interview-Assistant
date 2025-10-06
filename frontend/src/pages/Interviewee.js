@@ -1,3 +1,7 @@
+const API_BASE =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:5050";
+
+
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   Card, Input, Button, Modal, Progress, List, Badge, Typography, message,
@@ -137,7 +141,7 @@ export default function Interviewee() {
     try {
       let qs = cand.questions || [];
       if (!qs.length) {
-        const res = await fetch('http://localhost:5050/api/generate-questions', {
+        const res = await fetch(`${API_BASE}/api/generate-questions`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ role: 'Full Stack Developer', stack: ['React', 'Node.js'] })
@@ -176,68 +180,90 @@ export default function Interviewee() {
 
   // FIXED: Upload resume - COMPLETELY rewritten to handle state properly
   const handleUploadFile = useCallback(async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  console.log('🎯 handleUploadFile FUNCTION CALLED'); // DEBUG
+  
+  const file = e.target.files[0];
+  console.log('📁 File selected:', file); // DEBUG
+  console.log('📁 File name:', file?.name); // DEBUG
+  console.log('📁 File type:', file?.type); // DEBUG
+  console.log('📁 File size:', file?.size); // DEBUG
+  
+  if (!file) {
+    console.log('❌ No file selected');
+    return;
+  }
+  
+  setUploading(true);
+  try {
+    console.log('🚀 Starting file upload...'); // DEBUG
     
-    setUploading(true);
-    try {
-      const fd = new FormData();
-      fd.append('file', file);
-      const res = await fetch('http://localhost:5050/api/parse-resume', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
+    const fd = new FormData();
+    fd.append('file', file);
+    
+    console.log('📤 Making API request to parse-resume...'); // DEBUG
+    const res = await fetch('${API_BASE}/api/parse-resume', { 
+      method: 'POST', 
+      body: fd 
+    });
+    
+    console.log('📥 API response status:', res.status); // DEBUG
+    const data = await res.json();
+    console.log('📥 API response data:', data); // DEBUG
+    
+    if (data.error) throw new Error(data.error);
 
-      const id = 'c' + Date.now();
-      const newCand = {
-        id, 
-        name: data.name || '', 
-        email: data.email || '', 
-        phone: data.phone || '', 
-        resumeText: file.name,
-        createdAt: new Date().toISOString(), 
-        currentIndex: 0, 
-        answers: [], 
-        finalScore: null, 
-        summary: null,
-        timer: null, 
-        paused: false, 
-        questionsLength: 0, 
-        questions: []
-      };
+    const id = 'c' + Date.now();
+    const newCand = {
+      id, 
+      name: data.name || '', 
+      email: data.email || '', 
+      phone: data.phone || '', 
+      resumeText: file.name,
+      createdAt: new Date().toISOString(), 
+      currentIndex: 0, 
+      answers: [], 
+      finalScore: null, 
+      summary: null,
+      timer: null, 
+      paused: false, 
+      questionsLength: 0, 
+      questions: []
+    };
 
-      const missing = {};
-      if (!newCand.name) missing.name = '';
-      if (!newCand.email) missing.email = '';
-      if (!newCand.phone) missing.phone = '';
-      
-      if (Object.keys(missing).length > 0) {
-        // Case 1: Missing fields - show modal
-        setCandidates(prev => [...prev, newCand]);
-        setMissingFields({ ...missing, id });
-        setShowModal(true);
-        setActive(id);
-      } else {
-        // Case 2: All fields present - start interview immediately
-        // Update candidates and then open the candidate with the updated list
-        setCandidates(prev => {
-          const updatedCandidates = [...prev, newCand];
-          // Open candidate with the updated candidates list
-          setTimeout(() => {
-            openCandidate(id, false, updatedCandidates);
-          }, 0);
-          return updatedCandidates;
-        });
-        setActive(id);
-      }
-    } catch (err) {
-      message.error(err.message || 'Failed to upload resume.');
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+    console.log('👤 New candidate created:', newCand); // DEBUG
+
+    const missing = {};
+    if (!newCand.name) missing.name = '';
+    if (!newCand.email) missing.email = '';
+    if (!newCand.phone) missing.phone = '';
+    
+    if (Object.keys(missing).length > 0) {
+      console.log('📝 Missing fields detected, showing modal'); // DEBUG
+      setCandidates(prev => [...prev, newCand]);
+      setMissingFields({ ...missing, id });
+      setShowModal(true);
+      setActive(id);
+    } else {
+      console.log('✅ All fields present, starting interview immediately'); // DEBUG
+      setCandidates(prev => {
+        const updatedCandidates = [...prev, newCand];
+        setTimeout(() => {
+          openCandidate(id, false, updatedCandidates);
+        }, 0);
+        return updatedCandidates;
+      });
+      setActive(id);
     }
-  }, [openCandidate]);
+  } catch (err) {
+    console.error('❌ Upload error:', err); // DEBUG
+    message.error(err.message || 'Failed to upload resume.');
+  } finally {
+    console.log('🏁 Upload process completed'); // DEBUG
+    setUploading(false);
+    // Reset the file input
+    e.target.value = '';
+  }
+}, [openCandidate]);
 
   // FIXED: Resume after modal
   const resumeAfterModal = useCallback(async () => {
@@ -284,7 +310,7 @@ export default function Interviewee() {
     setSubmitting(true);
 
     try {
-      const gradeRes = await fetch('http://localhost:5050/api/grade-answer', {
+      const gradeRes = await fetch('${API_BASE}/api/grade-answer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: q.text, answer: responseText })
@@ -318,7 +344,7 @@ export default function Interviewee() {
       // Last question - keep loading state for final summary
       try {
         const latest = loadCandidates().find(x => x.id === active) || cand;
-        const finalRes = await fetch('http://localhost:5050/api/final-summary', {
+        const finalRes = await fetch('${API_BASE}/api/final-summary', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ candidate: latest })
@@ -381,22 +407,30 @@ export default function Interviewee() {
       <div className="left-panel">
         <Title level={3} style={{ marginBottom: 16, color: '#FFACAC' }}>Start Your Interview 🚀</Title>
 
-        <Spin spinning={uploading} tip="Parsing resume...">
-          <label htmlFor="resume-upload" style={{ display: 'block' }}>
-            <Input
-              id="resume-upload"
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf,.docx"
-              onChange={handleUploadFile}
-              placeholder="Upload Resume (.pdf, .docx)"
-              size="large"
-              prefix={<UploadOutlined style={{color: COLOR_WARNING}} />}
-              disabled={uploading}
-              style={{ marginBottom: 20, cursor: 'pointer' }}
-            />
-          </label>
-        </Spin>
+<Spin spinning={uploading} tip="Parsing resume...">
+  <div style={{ marginBottom: 20, textAlign: 'center' }}>
+    {/* Simple visible file input - NO HIDDEN INPUTS */}
+    <input
+      type="file"
+      accept=".pdf,.docx"
+      onChange={handleUploadFile}
+      style={{
+        width: '100%',
+        padding: '12px',
+        border: `2px dashed ${COLOR_WARNING}`,
+        borderRadius: '8px',
+        backgroundColor: 'rgba(255, 172, 172, 0.1)',
+        color: '#FFACAC',
+        fontSize: '16px',
+        cursor: 'pointer'
+      }}
+      disabled={uploading}
+    />
+    <Text type="secondary" style={{ display: 'block', marginTop: 8, fontSize: '12px' }}>
+      Select your PDF or DOCX resume file
+    </Text>
+  </div>
+</Spin>
 
         <Modal
           title={<Title level={4} style={{color: COLOR_WARNING}}>👤 Complete Your Profile</Title>}
