@@ -339,9 +339,10 @@ export default function Interviewee() {
               }}
               disabled={uploading}
             />
-            <Text type="secondary" style={{ display: 'block', marginTop: 8, fontSize: '12px' }}>
-              Select your PDF or DOCX resume file
-            </Text>
+            <Text className="upload-hint">
+  📄 Select your PDF or DOCX resume file
+</Text>
+
           </div>
         </Spin>
 
@@ -429,7 +430,10 @@ export default function Interviewee() {
             )
           )
         ) : (
-          <Text type="secondary">No active interview. Upload resume to start.</Text>
+          <Text className="no-active-text">
+  🚀 No active interview yet.<br />Upload your resume to get started!
+</Text>
+
         )}
       </div>
 
