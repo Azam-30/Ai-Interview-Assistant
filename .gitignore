@@ -106,3 +106,4 @@ env/
 venv/
 ENV/
 env.bak/
+.vercel
