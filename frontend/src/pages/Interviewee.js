@@ -18,7 +18,7 @@ const API_BASE =
   process.env.REACT_APP_API_BASE_URL ||
   (window.location.hostname === "localhost"
     ? "http://localhost:5050"
-    : "https://ai-interview-backend.vercel.app"); // Change to your backend deploy URL
+    : ""); // Change to your backend deploy URL
 
 // 🎨 Color palette
 const COLOR_SAFE = '#FFACAC';
